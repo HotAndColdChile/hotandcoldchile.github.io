@@ -683,7 +683,41 @@
     .delay-1 { animation-delay: .1s; }
     .delay-2 { animation-delay: .2s; }
     .delay-3 { animation-delay: .3s; }
-  </style>
+  
+/* ===== CINEMATIC LOGO ===== */
+.cinematic-logo .logo-block { position: relative; overflow: visible; }
+
+/* hielo */
+.icon-frio-pro {
+  fill:#dff6ff;
+  animation:hieloIntro 1.5s ease-out, hieloLoop 4s infinite;
+}
+@keyframes hieloIntro{
+ 0%{transform:scale(0) rotate(-180deg);opacity:0;}
+ 100%{transform:scale(1) rotate(0);opacity:1;}
+}
+@keyframes hieloLoop{
+ 0%{filter:drop-shadow(0 0 3px #9feaff);}
+ 50%{filter:drop-shadow(0 0 12px #c8f5ff);}
+ 100%{filter:drop-shadow(0 0 3px #9feaff);}
+}
+
+/* fuego */
+.icon-calor-pro{
+ fill:#ffd6a3;
+ animation:fuegoIntro 1.2s ease-out, fuegoLoop 1.3s infinite;
+}
+@keyframes fuegoIntro{
+ 0%{transform:scale(.5) translateY(10px);opacity:0;}
+ 100%{transform:scale(1) translateY(0);opacity:1;}
+}
+@keyframes fuegoLoop{
+ 0%{transform:scale(1);filter:drop-shadow(0 0 5px #ff7a00);}
+ 50%{transform:scale(1.2) translateY(-3px);filter:drop-shadow(0 0 18px #ff3c00);}
+ 100%{transform:scale(1);filter:drop-shadow(0 0 5px #ff7a00);}
+}
+
+</style>
 </head>
 <body>
 
@@ -708,10 +742,10 @@
 <!-- HEADER -->
 <header id="header">
   <div class="container inner">
-    <a href="#" class="logo">
+    <a href="#" class="logo cinematic-logo">
       <div class="logo-blocks">
         <div class="logo-block lb-blue">
-          <svg viewBox="0 0 24 24"><path d="M22 11h-4.17l3.24-3.24-1.41-1.42L15 11h-2V9l4.66-4.66-1.42-1.41L13 6.17V2h-2v4.17L7.76 2.93 6.34 4.34 11 9v2H9L4.34 6.34 2.93 7.76 6.17 11H2v2h4.17l-3.24 3.24 1.41 1.42L9 13h2v2l-4.66 4.66 1.42 1.41L11 17.83V22h2v-4.17l3.24 3.24 1.42-1.41L13 15v-2h2l4.66 4.66 1.41-1.42L17.83 13H22v-2z"/></svg>
+          <svg class="icon-frio-pro" viewBox="0 0 24 24"><path d="M22 11h-4.17l3.24-3.24-1.41-1.42L15 11h-2V9l4.66-4.66-1.42-1.41L13 6.17V2h-2v4.17L7.76 2.93 6.34 4.34 11 9v2H9L4.34 6.34 2.93 7.76 6.17 11H2v2h4.17l-3.24 3.24 1.41 1.42L9 13h2v2l-4.66 4.66 1.42 1.41L11 17.83V22h2v-4.17l3.24 3.24 1.42-1.41L13 15v-2h2l4.66 4.66 1.41-1.42L17.83 13H22v-2z"/></svg>
         </div>
         <div class="logo-block lb-red">
           <svg viewBox="0 0 24 24"><path d="M13.5 .67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"/></svg>
@@ -1088,5 +1122,33 @@
   }
 </script>
 
+<canvas id="particles" style="position:absolute;top:0;left:0;width:120px;height:60px;pointer-events:none;"></canvas>
+<script>
+
+const canvas=document.getElementById('particles');
+const ctx=canvas.getContext('2d');
+canvas.width=120;canvas.height=60;
+let particles=[];
+function createParticle(x,y,type){
+ return{x,y,size:Math.random()*3,speedX:(Math.random()-.5),speedY:Math.random()*-1.5,life:60,type};
+}
+function spawnParticles(){
+ particles.push(createParticle(80,30,'fire'));
+ particles.push(createParticle(30,30,'ice'));
+}
+function update(){
+ ctx.clearRect(0,0,canvas.width,canvas.height);
+ particles.forEach((p,i)=>{
+  p.x+=p.speedX;p.y+=p.speedY;p.life--;
+  ctx.beginPath();
+  ctx.fillStyle=p.type==='fire'?'rgba(255,120,0,0.8)':'rgba(180,240,255,0.8)';
+  ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();
+  if(p.life<=0)particles.splice(i,1);
+ });
+}
+function loop(){spawnParticles();update();requestAnimationFrame(loop);}
+loop();
+
+</script>
 </body>
 </html>
